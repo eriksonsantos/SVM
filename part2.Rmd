@@ -1,7 +1,56 @@
-```{python}
-print(2)
+```{r}
+rm(list=ls())
+
+glass <- read.csv("~/Documentos/ufmg/2022-1/padrao/exercicio 4/R/main/glass.data", header=FALSE)
+```
+
+
+```{r}
+library(kernlab)
+library(ggplot2)
+library("GGally")
+x <- as.matrix(glass[2:10])
+y <- as.matrix(glass[11])
+
+xseq <- replicate(10,sample(dim(y)[1]))
+tamTrein = as.integer((dim(y)[1])*0.7)
+
+vetorAcuraciaTrain = matrix(0,ncol=10,nrow=1)
+vetorAcuraciaTest = matrix(0,ncol=10,nrow=1)
+
+for (i in 1:10) {
+  xauxTrain <- x[xseq[1:tamTrein,i],]
+  yauxTrain <- matrix(y[xseq[1:tamTrein ,i],])
+  
+  xauxTest <- x[xseq[tamTrein:dim(y)[1] ,i],]
+  yauxTest <- matrix(y[xseq[tamTrein:dim(y)[1] ,i],])
+  
+  
+  svmtrein <- ksvm(xauxTrain,yauxTrain, type="C-svc", kernel='rbfdot',C = 10,epsilon=0.01)
+  
+  yhatTrain <- matrix(predict(svmtrein,xauxTrain,type="response"))
+  yhatTest <- matrix(predict(svmtrein,xauxTest,type="response"))
+ 
+
+  vetorAcuraciaTrain[i] =1 - (t(yhatTrain - yauxTrain) %*% (yhatTrain -yauxTrain))/(dim(yauxTrain)[1])
+  vetorAcuraciaTest[i] =1 - (t(yhatTest - yauxTest) %*% (yhatTest -yauxTest))/(dim(yauxTest)[1])
+
+}
+
+vetorAcuraciaTrain
+vetorAcuraciaTest
+
+
 ```
 ```{r}
-print(3)
+mean(vetorAcuraciaTrain)
+sd(vetorAcuraciaTrain)
 ```
+
+
+```{r}
+mean(vetorAcuraciaTest)
+sd(vetorAcuraciaTest)
+```
+
 

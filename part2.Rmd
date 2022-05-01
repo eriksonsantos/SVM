@@ -1,9 +1,20 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+**Códigos feitos no Notebook R**
+
+**Essa parte foi feita em R**
+
+
+
 ```{r}
 rm(list=ls())
 
 glass <- read.csv("~/Documentos/ufmg/2022-1/padrao/exercicio 4/R/main/glass.data", header=FALSE)
 ```
-
 
 ```{r}
 library(kernlab)
@@ -42,15 +53,107 @@ vetorAcuraciaTest
 
 
 ```
+
 ```{r}
 mean(vetorAcuraciaTrain)
 sd(vetorAcuraciaTrain)
 ```
 
-
 ```{r}
 mean(vetorAcuraciaTest)
+```
+
+```{r}
 sd(vetorAcuraciaTest)
 ```
 
 
+
+
+
+**Essa parte foi feita em Python**
+
+```{python}
+#!pip install scikit-learn
+#!pip install matplotlib
+#!pip install pandas
+```
+
+```{python}
+
+from sklearn import svm
+
+import numpy as np
+
+import matplotlib as mplt
+import pandas as pd
+```
+
+```{python}
+glass = pd.read_csv('/home/erikson/Documentos/ufmg/2022-1/padrao/exercicio 4/code/SVM/glass.data',header=None)
+aux = glass.to_numpy()
+x = aux[:,2:10]
+y = pd.DataFrame(glass[10]);
+from sklearn import svm
+Model = svm.SVC(kernel='linear',C=1000)
+
+```
+
+```{python}
+import random
+
+amostras = np.zeros(shape=(y.shape[0],10))
+
+for i in range(10):
+  amostras[:,i]= np.array(random.sample(range(y.shape[0]),y.shape[0]))
+   
+amostras = amostras.astype(int)
+
+
+tamTrain = np.array(y.shape[0]*0.7).astype(int)
+
+vetorAcuraciaTrain = np.zeros(shape=10)
+vetorAcuraciaTest = np.zeros(shape=10)
+
+```
+
+```{python}
+from sklearn.metrics import accuracy_score, confusion_matrix, plot_confusion_matrix
+from sklearn.model_selection import train_test_split
+```
+
+```{python}
+aux2 = y.to_numpy()
+vetorAcuraciaTrain = []
+vetorAcuraciaTest = []
+
+for i in range(10):
+  X_train, X_test, y_train, y_test = train_test_split(x,aux2, train_size=0.75);
+  Model.fit(X_train,y_train);
+  yAproxTrain = Model.predict(X_train);
+  yAproxTrain =  np.asarray(yAproxTrain) ;
+  
+  yAproxTest = Model.predict(X_test);
+  yAproxTest = np.asarray(yAproxTest);
+  
+  ac1= accuracy_score(y_train,yAproxTrain);
+  ac2= accuracy_score(y_test,yAproxTest);
+
+  vetorAcuraciaTrain.append(ac1);
+  vetorAcuraciaTest.append(ac2);
+ 
+
+print("A média para acurácia para os dados de treinamento: "+ str(np.mean(vetorAcuraciaTrain)));
+```
+
+```{python}
+print("A média para acurácia para os dados de teste: "+ str(np.mean(vetorAcuraciaTest)))
+```
+
+```{python}
+print("O desvio padrão para a acurácia para os dados de treinamento: "+ str(np.std(vetorAcuraciaTrain)))
+```
+
+```{python}
+print("O desvio padrão para a acurácia para os dados de teste: "+ str(np.std(vetorAcuraciaTest)))
+```
